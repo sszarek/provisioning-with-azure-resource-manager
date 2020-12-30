@@ -1,18 +1,37 @@
 {
     "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
     "contentVersion": "1.0.0.0",
-    "parameters": {},
+    "parameters": {
+        "storageAccountName": {
+            "type": "string",
+            "metadata": {
+                "description": "Storage Account name"
+            }
+        },
+        "location": {
+            "type": "string",
+            "metadata": {
+                "description": "Region where Storage Account will be deployed."
+            }
+        },
+        "containerName": {
+            "type": "string",
+            "metadata": {
+                "description": "Name for Blob container."
+            }
+        }
+    },
     "functions": [],
     "variables": {},
     "resources": [
         {
-            "name": "provisionwarmtemplate",
+            "name": "[parameters('storageAccountName')]",
             "type": "Microsoft.Storage/storageAccounts",
             "apiVersion": "2019-06-01",
             "tags": {
-                "displayName": "provisioningWithArmTemplatesSA"
+                "displayName": "[parameters('storageAccountName')]"
             },
-            "location": "[resourceGroup().location]",
+            "location": "[parameters('location')]",
             "kind": "StorageV2",
             "sku": {
                 "name": "Standard_LRS",
@@ -22,9 +41,9 @@
                 {
                     "type": "blobServices/containers",
                     "apiVersion": "2019-06-01",
-                    "name": "[concat('default/', 'my-storage-container')]",
+                    "name": "[concat('default/', parameters('containerName'))]",
                     "dependsOn": [
-                        "[resourceId('Microsoft.Storage/storageAccounts', 'provisionwarmtemplate')]"
+                        "[resourceId('Microsoft.Storage/storageAccounts', parameters('storageAccountName'))]"
                     ]
                 }
             ]
